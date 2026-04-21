@@ -1,0 +1,93 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-capability",
+  "description": "Main desktop capability",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:path:default",
+    "core:path:allow-join",
+    "core:path:allow-resolve-directory",
+
+    "fs:default",
+    "fs:allow-read-dir",
+    "fs:allow-read-file",
+    "fs:allow-read-text-file",
+    "fs:allow-stat",
+    "fs:allow-write-file",
+    "fs:allow-write-text-file",
+
+    "fs:scope-appconfig-recursive",
+    "fs:scope-appdata-recursive",
+    "fs:scope-desktop-recursive",
+    "fs:scope-exe-recursive",
+
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\**" },
+        { "path": "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Config\\**" },
+        { "path": "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx" },
+        { "path": "\\\\10.81.6.23\\VA_Transfer\\TDS\\HAL2106\\EventLog\\**" },
+        { "path": "\\\\10.81.6.23\\VA_Transfer\\TDS\\HAL2403\\EventLog\\**" },
+        { "path": "\\\\10.81.6.23\\VA_Transfer\\TDS\\HAL2533\\EventLog\\**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\Config\\",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\**",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\src-tauri\\target\\debug\\"
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\Config\\",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx",
+	      "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\Config\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\src-tauri\\target\\debug\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\**"
+      ]
+    },
+        {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx",
+	      "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\Config\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\src-tauri\\target\\debug\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\**"
+      ]
+    },
+        {
+      "identifier": "fs:allow-write-text-file",
+      "allow": [
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx",
+	      "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\Config\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\src-tauri\\target\\debug\\ethos_config.json",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\**"
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-file",
+      "allow": [
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\HAL_Logs\\Extracted_Files\\Database\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Ethos Dashboard\\**",
+        "\\\\umcn.nl\\nas\\RBS\\RTH_FTGSTORAGE\\FTGroep\\TECHNIEK\\toestellen\\Varian\\Vervangen_Leaf_motors_Halcyon_Ethos.xlsx",
+        "C:\\Users\\z169155\\Documents\\GitHub\\dashboard-ethos\\**"
+      ]
+    }
+  ]
+}
+
