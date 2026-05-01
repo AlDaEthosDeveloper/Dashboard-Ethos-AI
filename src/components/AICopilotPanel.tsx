@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { askAI, approveDirectory, enableLearningMode, teachAI } from "@/ai/agent";
+import { isTauriRuntimeAvailable } from "@/ai/tools";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ export const AICopilotPanel = () => {
   const [isBusy, setIsBusy] = useState(false);
 
   const [learningMode, setLearningModeState] = useState(false);
+  const [tauriAvailable] = useState(isTauriRuntimeAvailable());
   const [directoryPath, setDirectoryPath] = useState("");
   const [learningStatus, setLearningStatus] = useState("No directory approved.");
 
@@ -43,9 +45,10 @@ export const AICopilotPanel = () => {
   const onToggleLearningMode = (enabled: boolean) => {
     setLearningModeState(enabled);
     if (enabled) {
-      enableLearningMode();
+      enableLearningMode(true);
       setLearningStatus("Learning mode enabled.");
     } else {
+      enableLearningMode(false);
       setLearningStatus("Learning mode disabled for this session.");
     }
   };
@@ -101,6 +104,9 @@ export const AICopilotPanel = () => {
         <div className="rounded-md border p-3 text-sm text-muted-foreground whitespace-pre-wrap">{answer}</div>
 
         <div className="space-y-2 rounded-md border p-3">
+          {!tauriAvailable ? (
+            <p className="text-xs text-amber-600">Folder approval/teaching works only in the Tauri desktop runtime.</p>
+          ) : null}
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Learning Mode</span>
             <Switch checked={learningMode} onCheckedChange={onToggleLearningMode} />
@@ -113,10 +119,10 @@ export const AICopilotPanel = () => {
           />
 
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={onApproveDirectory} disabled={!canApproveDirectory || !learningMode}>
+            <Button variant="outline" onClick={onApproveDirectory} disabled={!canApproveDirectory || !learningMode || !tauriAvailable}>
               Approve Folder
             </Button>
-            <Button onClick={onTeachAI} disabled={!canApproveDirectory || !learningMode}>
+            <Button onClick={onTeachAI} disabled={!canApproveDirectory || !learningMode || !tauriAvailable}>
               Teach AI
             </Button>
           </div>

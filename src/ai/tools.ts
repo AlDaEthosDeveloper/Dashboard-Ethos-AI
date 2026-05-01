@@ -1,5 +1,9 @@
 type TauriInvoker = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
+export function isTauriRuntimeAvailable() {
+  return Boolean((window as Window & { __TAURI__?: { core?: { invoke?: TauriInvoker } } }).__TAURI__?.core?.invoke);
+}
+
 function getTauriInvoke(): TauriInvoker {
   const tauriInvoke = (window as Window & { __TAURI__?: { core?: { invoke?: TauriInvoker } } }).__TAURI__?.core?.invoke;
 
