@@ -1,3 +1,6 @@
+import { isLearningMode, setLearningMode } from "./learningState";
+import { addMemory, getMemories } from "./memory";
+import { approveDir, getApprovedDirs, isApproved } from "./permissions";
 import { getAIContext } from "./snapshot";
 import { tools } from "./tools";
 
@@ -10,11 +13,85 @@ type OpenAIToolCall = {
   };
 };
 
+function shouldLearn(question: string) {
+  const lowered = question.toLowerCase();
+  return lowered.includes("learn this database") || lowered.includes("study this folder");
+}
+
+async function summarizeForMemory(source: string, content: string): Promise<string> {
+  const apiKey = import.meta.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("Missing OPENAI_API_KEY environment variable.");
+  }
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "Summarize what is important to remember about how this app works.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({ source, content: content.slice(0, 20000) }),
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI request failed: ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data?.choices?.[0]?.message?.content ?? "";
+}
+
+export async function teachAI(path: string): Promise<string> {
+  if (!isLearningMode()) {
+    return "Learning mode is disabled.";
+  }
+
+  if (!isApproved(path)) {
+    return "Directory is not approved.";
+  }
+
+  const files = await tools.read_directory({ path });
+
+  for (const filePath of files) {
+    const content = await tools.read_file({ path: filePath });
+    const summary = await summarizeForMemory(filePath, content);
+    addMemory({
+      summary,
+      source: filePath,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  return `Learned from ${files.length} file(s).`;
+}
+
 export async function runAIAgent(question: string): Promise<string> {
   const apiKey = import.meta.env.OPENAI_API_KEY;
 
   if (!apiKey) {
     throw new Error("Missing OPENAI_API_KEY environment variable.");
+  }
+
+  if (isLearningMode() && shouldLearn(question)) {
+    const firstApprovedPath = getApprovedDirs()[0];
+    if (!firstApprovedPath) {
+      return "No approved directory available for learning.";
+    }
+    return teachAI(firstApprovedPath);
   }
 
   const context = getAIContext();
@@ -35,7 +112,7 @@ export async function runAIAgent(question: string): Promise<string> {
         },
         {
           role: "user",
-          content: JSON.stringify({ question, context }),
+          content: JSON.stringify({ question, context, memories: getMemories() }),
         },
       ],
       tools: [
@@ -96,6 +173,16 @@ export async function runAIAgent(question: string): Promise<string> {
   }
 
   return message?.content ?? "";
+}
+
+
+export function enableLearningMode() {
+  setLearningMode(true);
+}
+
+export async function approveDirectory(path: string) {
+  approveDir(path);
+  await tools.approve_directory({ path });
 }
 
 export async function askAI(question: string) {
