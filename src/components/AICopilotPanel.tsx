@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import { askAI, approveDirectory, enableLearningMode, teachAI } from "@/ai/agent";
+import { askAI, approveDirectory, enableLearningMode, setOpenAIKey, teachAI } from "@/ai/agent";
 import { isTauriRuntimeAvailable } from "@/ai/tools";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,10 +23,16 @@ export const AICopilotPanel = () => {
   const [learningMode, setLearningModeState] = useState(false);
   const [tauriAvailable] = useState(isTauriRuntimeAvailable());
   const [directoryPath, setDirectoryPath] = useState("");
+  const [apiKeyInput, setApiKeyInput] = useState("");
   const [learningStatus, setLearningStatus] = useState("No directory approved.");
 
   const canSubmitQuestion = useMemo(() => question.trim().length > 0 && !isBusy, [question, isBusy]);
   const canApproveDirectory = useMemo(() => directoryPath.trim().length > 0 && !isBusy, [directoryPath, isBusy]);
+
+  const onSaveApiKey = () => {
+    setOpenAIKey(apiKeyInput);
+    setLearningStatus(apiKeyInput.trim() ? "OpenAI API key saved for this browser profile." : "OpenAI API key cleared.");
+  };
 
   const onAskAI = async () => {
     if (!canSubmitQuestion) return;
@@ -89,6 +95,17 @@ export const AICopilotPanel = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="space-y-2">
+          <div className="grid grid-cols-[1fr_auto] gap-2">
+            <Input
+              type="password"
+              value={apiKeyInput}
+              onChange={(event) => setApiKeyInput(event.target.value)}
+              placeholder="Set OpenAI API key (optional UI override)"
+            />
+            <Button variant="outline" onClick={onSaveApiKey} disabled={isBusy}>
+              Save Key
+            </Button>
+          </div>
           <Textarea
             value={question}
             onChange={(event) => setQuestion(event.target.value)}

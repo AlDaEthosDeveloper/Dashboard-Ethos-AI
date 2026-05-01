@@ -5,8 +5,20 @@ import { getAIContext } from "./snapshot";
 import { isTauriRuntimeAvailable, tools } from "./tools";
 
 
+const OPENAI_KEY_STORAGE_KEY = "AI_COPILOT_OPENAI_API_KEY";
+
 function getOpenAIKey() {
-  return import.meta.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY;
+  const storedKey = typeof window !== "undefined" ? window.localStorage.getItem(OPENAI_KEY_STORAGE_KEY) : null;
+  return storedKey || import.meta.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY;
+}
+
+export function setOpenAIKey(apiKey: string) {
+  if (typeof window === "undefined") return;
+  if (!apiKey.trim()) {
+    window.localStorage.removeItem(OPENAI_KEY_STORAGE_KEY);
+    return;
+  }
+  window.localStorage.setItem(OPENAI_KEY_STORAGE_KEY, apiKey.trim());
 }
 
 type OpenAIToolCall = {
@@ -27,7 +39,7 @@ async function summarizeForMemory(source: string, content: string): Promise<stri
   const apiKey = getOpenAIKey();
 
   if (!apiKey) {
-    throw new Error("Missing OpenAI API key. Set VITE_OPENAI_API_KEY (or OPENAI_API_KEY) in your Tauri frontend env.");
+    throw new Error("Missing OpenAI API key. Set it in Settings below or configure VITE_OPENAI_API_KEY.");
   }
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -92,7 +104,7 @@ export async function runAIAgent(question: string): Promise<string> {
   const apiKey = getOpenAIKey();
 
   if (!apiKey) {
-    throw new Error("Missing OpenAI API key. Set VITE_OPENAI_API_KEY (or OPENAI_API_KEY) in your Tauri frontend env.");
+    throw new Error("Missing OpenAI API key. Set it in Settings below or configure VITE_OPENAI_API_KEY.");
   }
 
   if (isLearningMode() && shouldLearn(question)) {
