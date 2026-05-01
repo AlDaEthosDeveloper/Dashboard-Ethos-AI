@@ -10,10 +10,24 @@ fn executable_dir_fallback() -> Result<String, String> {
   Ok(exe_dir.to_string_lossy().to_string())
 }
 
+#[tauri::command]
+fn ai_navigate(route: String) -> String {
+  format!("Navigated to {}", route)
+}
+
+#[tauri::command]
+fn ai_create_item(name: String) -> String {
+  format!("Created item {}", name)
+}
+
 fn main() {
   tauri::Builder::default()
     .plugin(tauri_plugin_fs::init())
-    .invoke_handler(tauri::generate_handler![executable_dir_fallback])
+    .invoke_handler(tauri::generate_handler![
+      executable_dir_fallback,
+      ai_navigate,
+      ai_create_item
+    ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
