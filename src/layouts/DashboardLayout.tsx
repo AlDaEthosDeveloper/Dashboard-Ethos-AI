@@ -4,6 +4,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
 import { UploadProvider } from '@/contexts/UploadContext';
+import { AICopilotPanel } from '@/components/AICopilotPanel';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -24,6 +25,7 @@ const DashboardContent = ({ children }: DashboardLayoutProps) => {
           <div className="flex-1 p-6">
             {children}
           </div>
+          <AICopilotPanel />
         </main>
       </div>
     </SidebarProvider>
