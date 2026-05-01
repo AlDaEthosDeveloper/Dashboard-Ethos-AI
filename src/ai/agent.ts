@@ -2,7 +2,12 @@ import { isLearningMode, setLearningMode } from "./learningState";
 import { addMemory, getMemories } from "./memory";
 import { approveDir, getApprovedDirs, isApproved } from "./permissions";
 import { getAIContext } from "./snapshot";
-import { tools } from "./tools";
+import { isTauriRuntimeAvailable, tools } from "./tools";
+
+
+function getOpenAIKey() {
+  return import.meta.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY;
+}
 
 type OpenAIToolCall = {
   id: string;
@@ -19,10 +24,10 @@ function shouldLearn(question: string) {
 }
 
 async function summarizeForMemory(source: string, content: string): Promise<string> {
-  const apiKey = import.meta.env.OPENAI_API_KEY;
+  const apiKey = getOpenAIKey();
 
   if (!apiKey) {
-    throw new Error("Missing OPENAI_API_KEY environment variable.");
+    throw new Error("Missing OpenAI API key. Set VITE_OPENAI_API_KEY (or OPENAI_API_KEY) in your Tauri frontend env.");
   }
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -56,6 +61,10 @@ async function summarizeForMemory(source: string, content: string): Promise<stri
 }
 
 export async function teachAI(path: string): Promise<string> {
+  if (!isTauriRuntimeAvailable()) {
+    return "Learning from folders requires the Tauri desktop runtime.";
+  }
+
   if (!isLearningMode()) {
     return "Learning mode is disabled.";
   }
@@ -80,10 +89,10 @@ export async function teachAI(path: string): Promise<string> {
 }
 
 export async function runAIAgent(question: string): Promise<string> {
-  const apiKey = import.meta.env.OPENAI_API_KEY;
+  const apiKey = getOpenAIKey();
 
   if (!apiKey) {
-    throw new Error("Missing OPENAI_API_KEY environment variable.");
+    throw new Error("Missing OpenAI API key. Set VITE_OPENAI_API_KEY (or OPENAI_API_KEY) in your Tauri frontend env.");
   }
 
   if (isLearningMode() && shouldLearn(question)) {
@@ -176,11 +185,15 @@ export async function runAIAgent(question: string): Promise<string> {
 }
 
 
-export function enableLearningMode() {
-  setLearningMode(true);
+export function enableLearningMode(enabled = true) {
+  setLearningMode(enabled);
 }
 
 export async function approveDirectory(path: string) {
+  if (!isTauriRuntimeAvailable()) {
+    throw new Error("Folder actions require running inside the Tauri desktop app.");
+  }
+
   approveDir(path);
   await tools.approve_directory({ path });
 }
